@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>SHE-GUARD | Women Safety App</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>🛡️ SHE-GUARD</h1>
+    <p>One Tap Emergency Safety App</p>
+
+    <button id="sosBtn">🚨 SOS</button>
+
+    <div id="output"></div>
+</div>
+
+<script>
+document.getElementById("sosBtn").onclick = function () {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(sendSOS);
+    } else {
+        alert("Geolocation not supported");
+    }
+};
+
+function sendSOS(position) {
+    const lat = position.coords.latitude;
+    const lon = position.coords.longitude;
+
+    fetch("/sos", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ lat, lon })
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("output").innerHTML = `
+            <p>🚨 Emergency Alert Sent!</p>
+            <a href="${data.map_link}" target="_blank">
+                View Live Location
+            </a>
+        `;
+    });
+}
+</script>
+
+</body>
+</html>
